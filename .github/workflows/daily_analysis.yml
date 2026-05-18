@@ -56,9 +56,7 @@ jobs:
           pip install -r requirements.txt
       
       - name: 创建必要目录
-        run: |
-          mkdir -p data logs reports
-      
+        run: mkdir -p data logs reports 
       - name: 执行股票分析
         env:
           # ==========================================
