@@ -374,16 +374,18 @@ jobs:
           # 如果有 Tushare Pro 高积分账号，可将 tushare 放在首位
           REALTIME_SOURCE_PRIORITY: ${{ vars.REALTIME_SOURCE_PRIORITY || 'tencent,akshare_sina,efinance,akshare_em' }}
           
-        run: |
+         run: |
+          # Telegram 输入股票代码覆盖默认股票
+          if [ -n "${{ github.event.inputs.stocks }}" ]; then
+            echo "STOCKS=${{ github.event.inputs.stocks }}" >> $GITHUB_ENV
+            echo "WATCHLIST=${{ github.event.inputs.stocks }}" >> $GITHUB_ENV
+            echo "STOCK_CODES=${{ github.event.inputs.stocks }}" >> $GITHUB_ENV
+            echo "✅ 使用输入股票代码: ${{ github.event.inputs.stocks }}"
+          fi
+
           # 处理 LITELLM YAML 配置文件
           if [ -n "$LITELLM_CONFIG_YAML" ] && [ -n "$LITELLM_CONFIG" ]; then
-            echo "📝 使用 GitHub Actions Secrets/Variables 中的 LITELLM_CONFIG_YAML 配置"
-            # 确保目录存在
-            mkdir -p "$(dirname "$LITELLM_CONFIG")"
-            # 写入配置文件（覆盖已有文件）
-            echo "$LITELLM_CONFIG_YAML" > "$LITELLM_CONFIG"
-            echo "✅ LITELLM 配置文件已写入: $LITELLM_CONFIG"
-          fi
+            echo "📝 使用 GitHub Actions Secrets/Variables 中的 LITELLM_CONFIG_YAML 配置"     
 
           # 判断运行模式
           MODE="${{ github.event.inputs.mode || 'full' }}"
